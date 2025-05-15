@@ -43,9 +43,7 @@ const Editor = () => {
     fetch(`${api_base_url}/getProject`, {
       mode: 'cors',
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         token: localStorage.getItem('token'),
         projectId: id,
@@ -70,9 +68,7 @@ const Editor = () => {
     fetch(`${api_base_url}/saveProject`, {
       mode: 'cors',
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         token: localStorage.getItem('token'),
         projectId: id,
@@ -142,24 +138,23 @@ const Editor = () => {
     <>
       <Navbar />
       <div className="flex flex-col md:flex-row h-screen">
-        {/* Code Editor Panel */}
-        <div className="relative w-full md:w-1/2 h-1/2 md:h-full">
-          <Editor2
-            onChange={(newCode) => setCode(newCode || '')}
-            theme={theme === 'dark' ? 'vs-dark' : 'light'}
-            height="100%"
-            width="100%"
-            language={data?.projLanguage || 'python'}
-            value={code}
-          />
 
-          {/* Desktop Buttons (Top-right) */}
-          <div className="hidden md:flex absolute top-2 right-2 z-10 gap-2">
+        {/* Left side - buttons on top (desktop), editor below */}
+        <div className="w-full md:w-1/2 h-1/2 md:h-full flex flex-col">
+
+          {/* Desktop Buttons - only visible on md and up */}
+          <div className="hidden md:flex gap-2 p-2 justify-end bg-[#1f1f1f]">
             <button
               onClick={copyToClipboard}
               className="flex items-center gap-1 bg-green-500 hover:bg-green-700 text-white px-3 py-1 rounded shadow-md transition-all duration-200 active:scale-95"
             >
               <FiCopy /> Copy
+            </button>
+            <button
+              onClick={saveProject}
+              className="flex items-center gap-1 bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded shadow-md transition-all duration-200 active:scale-95"
+            >
+              💾 Save
             </button>
             <button
               onClick={toggleTheme}
@@ -169,29 +164,54 @@ const Editor = () => {
               {theme === 'dark' ? 'Light' : 'Dark'}
             </button>
           </div>
-        </div>
 
-        {/* Mobile Buttons (Below Editor) */}
-        <div className="flex md:hidden justify-center gap-4 py-3 bg-[#1f1f1f]">
-          <button
-            onClick={copyToClipboard}
-            className="flex items-center gap-1 bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded shadow-md transition-all duration-200 active:scale-95"
-          >
-            <FiCopy /> Copy
-          </button>
-          <button
-            onClick={toggleTheme}
-            className="flex items-center gap-1 bg-gray-700 hover:bg-gray-500 text-white px-4 py-2 rounded shadow-md transition-all duration-200 active:scale-95"
-          >
-            {theme === 'dark' ? <FiSun /> : <FiMoon />}
-            {theme === 'dark' ? 'Light' : 'Dark'}
-          </button>
+          {/* Editor */}
+          <div className="flex-grow h-full">
+            <Editor2
+              onChange={(newCode) => setCode(newCode || '')}
+              theme={theme === 'dark' ? 'vs-dark' : 'light'}
+              height="100%"
+              width="100%"
+              language={data?.projLanguage || 'python'}
+              value={code}
+            />
+          </div>
+
+          {/* Mobile Buttons - below editor */}
+          <div className="flex md:hidden justify-center flex-wrap gap-4 py-3 bg-[#1f1f1f]">
+            <button
+              onClick={copyToClipboard}
+              className="flex items-center gap-1 bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded shadow-md transition-all duration-200 active:scale-95"
+            >
+              <FiCopy /> Copy
+            </button>
+            <button
+              onClick={saveProject}
+              className="flex items-center gap-1 bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded shadow-md transition-all duration-200 active:scale-95"
+            >
+              💾 Save
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="flex items-center gap-1 bg-gray-700 hover:bg-gray-500 text-white px-4 py-2 rounded shadow-md transition-all duration-200 active:scale-95"
+            >
+              {theme === 'dark' ? <FiSun /> : <FiMoon />}
+              {theme === 'dark' ? 'Light' : 'Dark'}
+            </button>
+          </div>
+
         </div>
 
         {/* Output Panel */}
-        <div className={`w-full md:w-1/2 h-1/2 md:h-full p-4 overflow-auto transition-all duration-300 ${theme === 'dark' ? 'bg-[#27272a]' : 'bg-white'}`}>
+        <div
+          className={`w-full md:w-1/2 h-1/2 md:h-full p-4 overflow-auto transition-all duration-300 ${
+            theme === 'dark' ? 'bg-[#27272a]' : 'bg-white'
+          }`}
+        >
           <div className="flex items-center justify-between border-b border-gray-700 pb-2 px-4">
-            <p className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Output</p>
+            <p className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+              Output
+            </p>
             <button
               className="btnNormal !w-fit !px-[20px] bg-green-500 hover:bg-green-700 text-white py-1 rounded"
               onClick={runProject}
@@ -199,7 +219,11 @@ const Editor = () => {
               Run
             </button>
           </div>
-          <pre className={`w-full h-[75vh] overflow-auto transition-all duration-300 ${error ? 'text-red-500' : theme === 'dark' ? 'text-white' : 'text-black'}`}>
+          <pre
+            className={`w-full h-[75vh] overflow-auto transition-all duration-300 ${
+              error ? 'text-red-500' : theme === 'dark' ? 'text-white' : 'text-black'
+            }`}
+          >
             {output}
           </pre>
         </div>
